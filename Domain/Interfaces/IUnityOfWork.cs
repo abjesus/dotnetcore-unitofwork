@@ -1,6 +1,3 @@
-using uow.Domain.Models;
-using uow.Infraestructure.Data.Repositories;
-
 namespace uow.Domain.Intefaces
 {
   public interface IUnitOfWork

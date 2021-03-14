@@ -1,6 +1,5 @@
 using System;
 using uow.Domain.Intefaces;
-using uow.Domain.Models;
 using uow.Infraestructure.Data.Repositories;
 
 namespace uow.Infraestructure.Data.Uow
