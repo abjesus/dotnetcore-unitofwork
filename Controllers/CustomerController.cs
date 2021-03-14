@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using uow.Domain.Intefaces;
 using uow.Domain.Models;
@@ -12,19 +13,18 @@ namespace uow.Controllers
   {
     [HttpGet]
     [Route("")]
-    public ActionResult<List<CustomerModel>> Get([FromServices] IUnitOfWork unitOfWork)
+    public async Task<ActionResult<PagedList<CustomerModel>>> Get([FromServices] IUnitOfWork unitOfWork)
     {
-      var customers = unitOfWork.CustomerRepository.GetAll();
-      return customers.ToList();
+      return await unitOfWork.CustomerRepository.GetAll();
     }
 
     [HttpGet]
     [Route("search/{name}")]
-    public ActionResult<List<CustomerModel>> Search([FromServices] IUnitOfWork unitOfWork, string name)
+    public async Task<ActionResult<List<CustomerModel>>> Search([FromServices] IUnitOfWork unitOfWork, string name)
     {
       if(!string.IsNullOrEmpty(name))
       {
-        return unitOfWork.CustomerRepository.SearchCustomersByName(name);
+        return await unitOfWork.CustomerRepository.SearchCustomersByName(name);
       }
 
       return new List<CustomerModel>();
@@ -49,14 +49,14 @@ namespace uow.Controllers
 
     [HttpPut]
     [Route("")]
-    public ActionResult<CustomerModel> Put(
+    public async Task<ActionResult<CustomerModel>> Put(
       [FromServices] IUnitOfWork unitOfWork,
       [FromBody] CustomerModel model
     )
     {
       if(ModelState.IsValid)
       {
-        var customerModel = unitOfWork.CustomerRepository.GetById(model.Id);
+        var customerModel = await unitOfWork.CustomerRepository.GetById(model.Id);
         
         if(customerModel != null && customerModel.Id > 0)
         {
@@ -74,11 +74,11 @@ namespace uow.Controllers
 
     [HttpDelete]
     [Route("{id:int}")]
-    public ActionResult<CustomerModel> Delete([FromServices] IUnitOfWork unitOfWork, int id)
+    public async Task<ActionResult<CustomerModel>> Delete([FromServices] IUnitOfWork unitOfWork, int id)
     {
       if(id > 0)
       {
-        var customerModel = unitOfWork.CustomerRepository.GetById(id);
+        var customerModel = await unitOfWork.CustomerRepository.GetById(id);
 
         if(customerModel != null && customerModel.Id > 0)
         {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using uow.Domain.Intefaces;
 using uow.Domain.Models;
@@ -12,21 +13,21 @@ namespace uow.Controllers
   {
     [HttpGet]
     [Route("")]
-    public ActionResult<List<ProductModel>> Get([FromServices] IUnitOfWork unityOfWork)
+    public async Task<ActionResult<PagedList<ProductModel>>> Get([FromServices] IUnitOfWork unityOfWork, [FromQuery] PaginationParams paginationParams)
     {
-      return unityOfWork.ProductRepository.GetAll().ToList();
+      return await unityOfWork.ProductRepository.GetAll(paginationParams);
     }
 
     [HttpGet]
     [Route("seach/{description}")]
-    public ActionResult<List<ProductModel>> Search([FromServices] IUnitOfWork unitOfWork, string description)
+    public async Task<ActionResult<PagedList<ProductModel>>> Search([FromServices] IUnitOfWork unitOfWork, string description, [FromQuery] PaginationParams paginationParams)
     {
       if(!string.IsNullOrEmpty(description))
       {
-        return unitOfWork.ProductRepository.GetProductsByDescription(description);
+        return await unitOfWork.ProductRepository.GetProductsByDescription(description, paginationParams);
       }
 
-      return new List<ProductModel>();
+      return new PagedList<ProductModel>();
     }
 
     [HttpPost]
@@ -49,14 +50,14 @@ namespace uow.Controllers
 
     [HttpPut]
     [Route("")]
-    public ActionResult<ProductModel> Put(
+    public async Task<ActionResult<ProductModel>> Put(
       [FromServices] IUnitOfWork unitOfWork,
       [FromBody] ProductModel model
     )
     {
       if(ModelState.IsValid)
       {
-        var productModel = unitOfWork.ProductRepository.GetById(model.Id);
+        var productModel = await unitOfWork.ProductRepository.GetById(model.Id);
         if(productModel != null && productModel.Id > 0)
         {
           productModel.Description = model.Description;
@@ -75,11 +76,11 @@ namespace uow.Controllers
 
     [HttpDelete]
     [Route("{id:int}")]
-    public ActionResult<ProductModel> Delete([FromServices] IUnitOfWork unitOfWork, int id)
+    public async Task<ActionResult<ProductModel>> Delete([FromServices] IUnitOfWork unitOfWork, int id)
     {
       if(id > 0)
       {
-        var productModel = unitOfWork.ProductRepository.GetById(id);
+        var productModel = await unitOfWork.ProductRepository.GetById(id);
         if(productModel != null && productModel.Id > 0)
         {
           unitOfWork.ProductRepository.Delete(productModel);

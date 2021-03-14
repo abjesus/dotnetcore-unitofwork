@@ -1,13 +1,14 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using uow.Domain.Models;
 
 namespace uow.Domain.Intefaces
 {
   public interface IRepository<T>
   {
-    IQueryable<T> GetAll();
+    Task<PagedList<T>> GetAll(PaginationParams paginationParams = null);
 
-    T GetById(int ind);
+    Task<T> GetById(int ind);
 
     void Create(T model);
 

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using uow.Domain.Intefaces;
+using uow.Domain.Models;
+using uow.Extensions;
 
 namespace uow.Infraestructure.Data.Repositories
 {
@@ -25,19 +28,25 @@ namespace uow.Infraestructure.Data.Repositories
       _context.Set<T>().Remove(model);
     }
 
-    public IQueryable<T> GetAll()
+    public async Task<PagedList<T>> GetAll(PaginationParams paginationParams = null)
     {
-      return _context.Set<T>().AsNoTracking();
+      return await GetQuery()
+        .ToPagedList(paginationParams?.Page ?? 1, paginationParams?.PageSize ?? 10);
     }
 
-    public T GetById(int id)
+    public async Task<T> GetById(int id)
     {
-      return _context.Set<T>().Find(id);
+      return await _context.Set<T>().FindAsync(id);
     }
 
     public void Update(T model)
     {
       _context.Entry(model).State = EntityState.Modified;
+    }
+
+    protected IQueryable<T> GetQuery()
+    {
+      return _context.Set<T>().AsNoTracking();
     }
   }
 }

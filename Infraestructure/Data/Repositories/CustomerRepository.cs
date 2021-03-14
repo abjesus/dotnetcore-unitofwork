@@ -2,6 +2,8 @@ using uow.Domain.Models;
 using System.Linq;
 using System.Collections.Generic;
 using uow.Domain.Intefaces;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace uow.Infraestructure.Data.Repositories
 {
@@ -11,11 +13,11 @@ namespace uow.Infraestructure.Data.Repositories
     {
     }
 
-    public List<CustomerModel> SearchCustomersByName(string name)
+    public async Task<List<CustomerModel>> SearchCustomersByName(string name)
     {
-      return GetAll()
+      return await GetQuery()
         .Where(cus => cus.Name.Equals(name))
-        .ToList();
+        .ToListAsync();
     }
   }
 }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using uow.Domain.Intefaces;
 using uow.Domain.Models;
+using uow.Extensions;
 
 namespace uow.Infraestructure.Data.Repositories
 {
@@ -11,11 +13,12 @@ namespace uow.Infraestructure.Data.Repositories
     {
     }
 
-    public List<ProductModel> GetProductsByDescription(string description)
+    public async Task<PagedList<ProductModel>> GetProductsByDescription(string description, PaginationParams paginationParams = null)
     {
-      return GetAll()
-        .Where(prod => prod.Description.Equals(description))
-        .ToList();
+
+      return await GetQuery()
+          .Where(prod => prod.Description.Equals(description))
+          .ToPagedList(page: paginationParams?.Page ?? 1, pageSize: paginationParams?.PageSize ?? 10);
     }
 
     public override bool Equals(object obj)
