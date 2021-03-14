@@ -25,9 +25,9 @@ namespace uow.Infraestructure.Data.Repositories
       _context.Set<T>().Remove(model);
     }
 
-    public IEnumerable<T> GetAll()
+    public IQueryable<T> GetAll()
     {
-      return _context.Set<T>().ToList();
+      return _context.Set<T>().AsNoTracking();
     }
 
     public T GetById(int id)

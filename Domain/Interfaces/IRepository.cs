@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace uow.Domain.Intefaces
 {
   public interface IRepository<T>
   {
-    IEnumerable<T> GetAll();
+    IQueryable<T> GetAll();
 
     T GetById(int ind);
 
